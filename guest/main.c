@@ -1,10 +1,4 @@
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-
-#define WORD_SIZE 4
-#define BLOCK_WORDS 16
-#define FILENO_JOURNAL 3
 
 __asm__(".global _start\n\t"
 		".type _start, @function\n\t"
@@ -24,15 +18,15 @@ __asm__(".global _start\n\t"
 		// Jump to main function
 		"call main\n\t");
 
-extern void sys_halt(uint8_t exit_code, uint32_t *initial_sha_state);
-extern void sys_write(uint32_t fd, uint8_t *byte_ptr, int len);
-extern void sys_sha_buffer(uint32_t *out_state, uint32_t *in_state, uint8_t *buf, uint32_t count);
+// Note: this syscall isn't used, but just to indicate the platform syscalls can be called directly.
 extern void *sys_alloc_aligned(uint32_t bytes, uint32_t align);
 
+// TODO would be ideal if there is a way to have this pointer be typed (internal types not ffi safe)
 extern void *init_sha256();
 extern void sha256_update(void *hasher, const uint8_t *bytes_ptr, uint32_t len);
 extern uint32_t *sha256_finalize(void *hasher);
 
+void commit(void *hasher, const uint8_t *bytes_ptr, uint32_t len);
 void zkvm_exit(void *hasher, uint8_t exit_code);
 
 int main()
@@ -41,9 +35,7 @@ int main()
 	void *hasher = init_sha256();
 	uint8_t output_bytes[4] = {0, 1, 2, 3};
 
-	sha256_update(hasher, output_bytes, sizeof(output_bytes));
-
-	sys_write(FILENO_JOURNAL, output_bytes, sizeof(output_bytes));
+	commit(hasher, output_bytes, sizeof(output_bytes));
 
 	zkvm_exit(hasher, 0);
 

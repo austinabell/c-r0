@@ -3,7 +3,8 @@ use risc0_zkp::core::digest::Digest;
 // Import just to include library to link against.
 #[allow(unused_imports)]
 use risc0_zkvm_platform;
-use risc0_zkvm_platform::syscall::sys_halt;
+use risc0_zkvm_platform::fileno;
+use risc0_zkvm_platform::syscall::{sys_halt, sys_write};
 
 use core::ptr::slice_from_raw_parts;
 use risc0_zkp::core::hash::sha::guest::Impl;
@@ -40,4 +41,10 @@ pub unsafe extern "C" fn zkvm_exit(hasher: *mut CSha256, exit_code: u8) -> ! {
     let output_words: [u32; 8] =
         tagged_struct::<Impl>("risc0.output", &[&*journal_digest, &Digest::ZERO], &[]).into();
     sys_halt(exit_code, &output_words)
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn commit(hasher: *mut CSha256, bytes_ptr: *const u8, len: u32) {
+    sha256_update(hasher, bytes_ptr, len);
+    sys_write(fileno::JOURNAL, bytes_ptr, len as usize);
 }
