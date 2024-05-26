@@ -50,7 +50,7 @@ SECTIONS {
   . = ALIGN(4);
 
   .bss (NOLOAD) : {
-    __bss_begin = .;
+    __bss_start = .;
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss .bss.*)
@@ -60,24 +60,17 @@ SECTIONS {
     __bss_end = .;
   } >data
 
-  __bss_size = __bss_end - __bss_begin;
-  /* TODO resolve if needed */
-  __bss_start = __bss_begin;
-
-  __heap_start = ORIGIN(heap);
-  __heap_end = __heap_start + LENGTH(heap);
-  __heap_size = LENGTH(heap);
+  /* _end marker for zkvm allocator */
+  _end = ORIGIN(heap);
 
   __stack_init$ = ORIGIN(stack) + LENGTH(stack) - 4;
   _stack_top = __stack_init$;
 
-  /* _end marker for zkvm allocator */
-  _end = __heap_start;
 
   /DISCARD/ : {
     *(.rel*)
     *(.comment)
-    /* *(.eh_frame) */
+    *(.eh_frame)
     *(.riscv.attributes)
   }
 }
