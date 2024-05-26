@@ -1,6 +1,6 @@
 ROOT_DIR:=$(strip $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-ifneq ($(OS),Windows_NT)
+ifeq ($(OS),Windows_NT)
 $(error Windows not supported)
 else
     UNAME_S := $(shell uname -s)

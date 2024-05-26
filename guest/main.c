@@ -5,6 +5,11 @@
 #define WORD_SIZE 4
 #define BLOCK_WORDS 16
 
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
 __asm__(".global _start\n\t"
 		".type _start, @function\n\t"
 		"_start:\n\t"
@@ -46,11 +51,6 @@ int compute_u32s_needed(int len_bytes)
 	return align_up(n_words, BLOCK_WORDS);
 }
 
-int min(int a, int b)
-{
-	return (a < b) ? a : b;
-}
-
 void sha_buffer(uint32_t *initial_state, uint8_t *bytes, int len_bytes, uint32_t *out_state)
 {
 	int pad_len = compute_u32s_needed(len_bytes);
@@ -85,7 +85,7 @@ void sha256_init_state(uint32_t *state)
 	state[7] = 0x5be0cd19;
 }
 
-void taggedStruct(const char *tag, uint32_t digests[][8], int num_digests, uint32_t *out_state)
+void tagged_struct(const char *tag, uint32_t digests[][8], int num_digests, uint32_t *out_state)
 {
 	uint32_t tag_digest[8];
 	uint32_t sha_state[8];
@@ -147,7 +147,7 @@ int main()
 	memcpy(digests[0], journal_digest, 8 * sizeof(uint32_t));
 	memcpy(digests[1], assumptions_digest_state, 8 * sizeof(uint32_t));
 
-	taggedStruct("risc0.Output", digests, 2, output);
+	tagged_struct("risc0.Output", digests, 2, output);
 
 	sys_halt(0, output);
 
