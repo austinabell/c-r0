@@ -6,6 +6,24 @@
 #define WORD_SIZE 4
 #define BLOCK_WORDS 16
 
+__asm__(".global _start\n\t"
+		".type _start, @function\n\t"
+		"_start:\n\t"
+		"la sp,      _stack_top\n\t"
+
+		// Load the globals pointer. The program will load pointers relative to this
+		// register, so it must be set to the right value on startup.
+		// See: https://gnu-mcu-eclipse.github.io/arch/riscv/programmer/#the-gp-global-pointer-register
+		// Linker relaxations must be disabled to avoid the initialization beign
+		// relaxed with an uninitialized global pointer: mv gp, gp
+		".option push"
+		".option norelax"
+		"la gp,      __global_pointer$"
+		".option pop"
+
+		// Jump to main function
+		"call main\n\t");
+
 extern void sys_halt(uint8_t exit_code, uint32_t *initial_sha_state);
 // extern void sys_write(uint32_t fd, uint8_t *byte_ptr, int len);
 // extern void sys_sha_buffer(uint32_t *out_state, uint32_t *in_state, uint8_t *buf, uint32_t count);
@@ -113,9 +131,10 @@ extern void sys_halt(uint8_t exit_code, uint32_t *initial_sha_state);
 // 	// Note: do not need to free all_bytes since bump allocator
 // }
 
-int main(int argc, char *argv[])
+int main()
 {
-	// sys_halt(0, NULL);
+	uint32_t arr[8] = {0};
+	sys_halt(0, arr);
 	// uint32_t assumptions_digest_state[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 	// uint8_t output_bytes[4] = {0, 1, 2, 3};
 

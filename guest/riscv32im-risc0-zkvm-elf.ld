@@ -69,6 +69,7 @@ SECTIONS {
   __heap_size = LENGTH(heap);
 
   __stack_init$ = ORIGIN(stack) + LENGTH(stack) - 4;
+  _stack_top = __stack_init$;
 
   /* _end marker for zkvm allocator */
   _end = __heap_start;
