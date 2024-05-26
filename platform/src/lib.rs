@@ -1,8 +1,5 @@
 use risc0_binfmt::tagged_struct;
 use risc0_zkp::core::digest::Digest;
-// Import just to include library to link against.
-#[allow(unused_imports)]
-use risc0_zkvm_platform;
 use risc0_zkvm_platform::fileno;
 use risc0_zkvm_platform::syscall::{sys_halt, sys_write};
 
