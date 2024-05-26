@@ -1958,5 +1958,7 @@ dependencies = [
 name = "zkvm-platform"
 version = "0.1.0"
 dependencies = [
+ "risc0-binfmt",
+ "risc0-zkp",
  "risc0-zkvm-platform",
 ]
