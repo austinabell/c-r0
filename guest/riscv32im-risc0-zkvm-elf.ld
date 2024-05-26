@@ -19,6 +19,7 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 
 /* Must match risc0/zkvm/platform/src/memory.rs */
+/* TODO double check these memory sections, probably not ideal */
 MEMORY {
   stack        : ORIGIN = 0x00000400, LENGTH =  8M - 1K
   data    (RW) : ORIGIN = 0x00080000, LENGTH =  24M
