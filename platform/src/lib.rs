@@ -1,11 +1,10 @@
+use core::ptr::slice_from_raw_parts;
 use risc0_binfmt::tagged_struct;
 use risc0_zkp::core::digest::Digest;
-use risc0_zkvm_platform::fileno;
-use risc0_zkvm_platform::syscall::{sys_halt, sys_write};
-
-use core::ptr::slice_from_raw_parts;
 use risc0_zkp::core::hash::sha::guest::Impl;
 use risc0_zkp::core::hash::sha::rust_crypto::{Digest as _, Sha256};
+use risc0_zkvm_platform::fileno;
+use risc0_zkvm_platform::syscall::{sys_halt, sys_write};
 
 #[repr(C)]
 #[derive(Default)]
