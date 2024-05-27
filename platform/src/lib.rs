@@ -90,7 +90,7 @@ pub unsafe extern "C" fn sha256_free(hasher: *mut sha256_state) {
 pub unsafe extern "C" fn env_exit(hasher: *mut sha256_state, exit_code: u8) -> ! {
     let journal_digest = sha256_finalize(hasher);
     let output_words: [u32; 8] =
-        tagged_struct::<Impl>("risc0.output", &[&*journal_digest, &Digest::ZERO], &[]).into();
+        tagged_struct::<Impl>("risc0.Output", &[&*journal_digest, &Digest::ZERO], &[]).into();
     sys_halt(exit_code, &output_words)
 }
 
