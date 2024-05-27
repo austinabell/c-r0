@@ -207,6 +207,16 @@ typedef struct CoreWrapper_CtVariableCoreWrapper_Sha256VarCore_Impl_____U32__Oid
  */
 typedef struct CoreWrapper_CtVariableCoreWrapper_Sha256VarCore_Impl_____U32__OidSha256 Sha256_Impl;
 
+/**
+ * C wrapper for guest sha256 implementation.
+ *
+ * This is used in the guest to generate any sha256
+ * hash, but also to accumulate the Sha256 state of all data written to journal through
+ * [commit].
+ *
+ * Initialize with [init_sha256], and can retrieve the final hash through [sha256_finalize],
+ * or pass it into [zkvm_exit] to exit the program.
+ */
 typedef struct CSha256 {
   Sha256_Impl *inner;
 } CSha256;

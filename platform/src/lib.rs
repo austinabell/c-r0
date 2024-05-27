@@ -8,6 +8,14 @@ use risc0_zkvm_platform::syscall::{sys_halt, sys_write};
 
 use risc0_zkvm_platform;
 
+/// C wrapper for guest sha256 implementation. 
+/// 
+/// This is used in the guest to generate any sha256
+/// hash, but also to accumulate the Sha256 state of all data written to journal through
+/// [commit].
+/// 
+/// Initialize with [init_sha256], and can retrieve the final hash through [sha256_finalize],
+/// or pass it into [zkvm_exit] to exit the program.
 #[repr(C)]
 pub struct CSha256 {
     inner: *mut Sha256<Impl>,

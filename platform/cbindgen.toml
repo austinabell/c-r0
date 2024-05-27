@@ -8,5 +8,5 @@ language = "C"
 
 [parse]
 parse_deps = true
-extra_bindings = ["risc0-zkvm-platform", "risc0-zkvm-platform/export-syscalls"]
+extra_bindings = ["risc0-zkvm-platform"]
 clean = true
