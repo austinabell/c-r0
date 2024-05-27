@@ -217,9 +217,9 @@ typedef struct CoreWrapper_CtVariableCoreWrapper_Sha256VarCore_Impl_____U32__Oid
  * Initialize with [init_sha256], and can retrieve the final hash through [sha256_finalize],
  * or pass it into [zkvm_exit] to exit the program.
  */
-typedef struct CSha256 {
+typedef struct sha256_state {
   Sha256_Impl *inner;
-} CSha256;
+} sha256_state;
 
 /**
  * Digest represents the results of a hashing function.  It is always 256 bits
@@ -240,17 +240,34 @@ typedef uint32_t Digest[DIGEST_WORDS];
 
 
 
-struct CSha256 *init_sha256(void);
+struct sha256_state *init_sha256(void);
 
-void sha256_update(struct CSha256 *hasher, const uint8_t *data, uint32_t len);
+/**
+ * Update the sha256 state with the bytes passed in.
+ *
+ * # Safety
+ * This is safe assuming that pointers have not been manually modified, and len does not go past
+ * the buffer of the data in memory.
+ */
+void sha256_update(struct sha256_state *hasher, const uint8_t *data, uint32_t len);
 
-Digest *sha256_finalize(struct CSha256 *hasher);
+Digest *sha256_finalize(struct sha256_state *hasher);
 
-void sha256_free(struct CSha256 *hasher);
+void sha256_free(struct sha256_state *hasher);
 
-void zkvm_exit(struct CSha256 *hasher, uint8_t exit_code);
+/**
+ * Exit the zkvm, using the [sha256_state]
+ */
+void env_exit(struct sha256_state *hasher, uint8_t exit_code);
 
-void commit(struct CSha256 *hasher, const uint8_t *bytes_ptr, uint32_t len);
+/**
+ * Write data to the journal, updating the sha256 state accumulation with that data.
+ *
+ * # Safety
+ * This is safe assuming that pointers have not been manually modified, and len does not go past
+ * the buffer of the data in memory.
+ */
+void env_commit(struct sha256_state *hasher, const uint8_t *bytes_ptr, uint32_t len);
 
 #if defined(DEFINE_SYSCALLS)
 /**
