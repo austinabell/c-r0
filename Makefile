@@ -26,6 +26,10 @@ default: execute
 platform:
 	cargo +risc0 rustc -p zkvm-platform --target riscv32im-risc0-zkvm-elf --lib --crate-type staticlib --release --target-dir ./guest/out/platform
 
+.PHONY: headers
+headers:
+	cbindgen --crate zkvm-platform -c ./platform/cbindgen.toml -o ./guest/platform.h
+
 .PHONY: gcc
 gcc:
 	@if ! [ -d "./riscv32im-${MACHINE}" ]; then \
