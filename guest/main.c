@@ -21,10 +21,10 @@ __asm__(".global _start\n\t"
 // Note: this syscall isn't used, but just to indicate the platform syscalls can be called directly.
 extern void *sys_alloc_aligned(uint32_t bytes, uint32_t align);
 
-// TODO would be ideal if there is a way to have this pointer be typed (internal types not ffi safe)
-extern void *init_sha256();
-extern void sha256_update(void *hasher, const uint8_t *bytes_ptr, uint32_t len);
-extern uint32_t *sha256_finalize(void *hasher);
+typedef void *HASHER;
+extern HASHER init_sha256();
+extern void sha256_update(HASHER hasher, const uint8_t *bytes_ptr, uint32_t len);
+extern uint32_t *sha256_finalize(HASHER hasher);
 
 void commit(void *hasher, const uint8_t *bytes_ptr, uint32_t len);
 void zkvm_exit(void *hasher, uint8_t exit_code);
