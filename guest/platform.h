@@ -251,12 +251,30 @@ struct sha256_state *init_sha256(void);
  */
 void sha256_update(struct sha256_state *hasher, const uint8_t *data, uint32_t len);
 
+/**
+ * Finalize the hasher, returning an allocated digest of the output hash.
+ *
+ * Note: This digest is leaked, as the zkvm currently uses a bump allocator so it does not need to
+ * be freed. If switching allocator, should implement a free method for [Digest].
+ *
+ * # Safety
+ * Assumes [sha256_state] has not been freed previously.
+ */
 Digest *sha256_finalize(struct sha256_state *hasher);
 
+/**
+ * Free allocations from [sha256_state].
+ *
+ * # Safety
+ * This assumes the state has not already been freed or manually modified.
+ */
 void sha256_free(struct sha256_state *hasher);
 
 /**
- * Exit the zkvm, using the [sha256_state]
+ * Exit the zkvm, using the [sha256_state].
+ *
+ * # Safety
+ * Assumes hasher has not been freed.
  */
 void env_exit(struct sha256_state *hasher, uint8_t exit_code);
 

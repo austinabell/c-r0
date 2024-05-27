@@ -22,14 +22,6 @@ pub struct sha256_state {
     inner: *mut Sha256<Impl>,
 }
 
-impl sha256_state {
-    fn update(&mut self, data: &[u8]) {
-        unsafe {
-            (*self.inner).update(data);
-        }
-    }
-}
-
 #[no_mangle]
 pub extern "C" fn init_sha256() -> *mut sha256_state {
     Box::into_raw(Box::new(sha256_state {
@@ -48,7 +40,7 @@ pub unsafe extern "C" fn sha256_update(hasher: *mut sha256_state, data: *const u
         sys_panic(ERR_FREED.as_ptr(), ERR_FREED.len())
     }
     let data_slice = slice::from_raw_parts(data, len as usize);
-    (*hasher).update(data_slice);
+    (*(*hasher).inner).update(data_slice);
 }
 
 /// Finalize the hasher, returning an allocated digest of the output hash.
