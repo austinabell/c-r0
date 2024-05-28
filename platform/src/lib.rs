@@ -72,13 +72,12 @@ pub unsafe extern "C" fn sha256_free(hasher: *mut sha256_state) {
     if !hasher.is_null() {
         let mut boxed_hasher = Box::from_raw(hasher);
 
-
         let inner = Box::from_raw(boxed_hasher.inner);
         // Set pointer to null to avoid double free. `black_box` to avoid compiler optimizing away.
         boxed_hasher.inner = ptr::null_mut();
         drop(inner);
 
-        drop(Box::from_raw(hasher));
+        drop(boxed_hasher);
     }
 }
 
